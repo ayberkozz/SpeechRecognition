@@ -12,6 +12,7 @@
 		4BA7E37B2AE3FC6200265944 /* SpeechScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA7E37A2AE3FC6200265944 /* SpeechScreen.swift */; };
 		4BA7E3802AE3FC6400265944 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BA7E37F2AE3FC6400265944 /* Assets.xcassets */; };
 		4BA7E3832AE3FC6400265944 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BA7E3812AE3FC6400265944 /* LaunchScreen.storyboard */; };
+		4BA7E38D2AE418A400265944 /* SpeechErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA7E38C2AE418A400265944 /* SpeechErrors.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		4BA7E37F2AE3FC6400265944 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4BA7E3822AE3FC6400265944 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4BA7E3842AE3FC6400265944 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4BA7E38C2AE418A400265944 /* SpeechErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechErrors.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,12 +58,29 @@
 			children = (
 				4BA7E3762AE3FC6200265944 /* AppDelegate.swift */,
 				4BA7E3782AE3FC6200265944 /* SceneDelegate.swift */,
-				4BA7E37A2AE3FC6200265944 /* SpeechScreen.swift */,
+				4BA7E38B2AE4189000265944 /* Error */,
+				4BA7E38A2AE4188700265944 /* Screens */,
 				4BA7E37F2AE3FC6400265944 /* Assets.xcassets */,
 				4BA7E3812AE3FC6400265944 /* LaunchScreen.storyboard */,
 				4BA7E3842AE3FC6400265944 /* Info.plist */,
 			);
 			path = SpeechRecognition;
+			sourceTree = "<group>";
+		};
+		4BA7E38A2AE4188700265944 /* Screens */ = {
+			isa = PBXGroup;
+			children = (
+				4BA7E37A2AE3FC6200265944 /* SpeechScreen.swift */,
+			);
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		4BA7E38B2AE4189000265944 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				4BA7E38C2AE418A400265944 /* SpeechErrors.swift */,
+			);
+			path = Error;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,6 +155,7 @@
 			files = (
 				4BA7E37B2AE3FC6200265944 /* SpeechScreen.swift in Sources */,
 				4BA7E3772AE3FC6200265944 /* AppDelegate.swift in Sources */,
+				4BA7E38D2AE418A400265944 /* SpeechErrors.swift in Sources */,
 				4BA7E3792AE3FC6200265944 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
