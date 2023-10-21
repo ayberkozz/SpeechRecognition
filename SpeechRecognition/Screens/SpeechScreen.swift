@@ -45,7 +45,7 @@ extension SpeechRecogScreen {
         self.present(alert, animated: true, completion: nil)
     }
     
-    func ButtonColorAdjustment(sender:UIButton,DefaultColor: UIColor,isEnable:Bool){
+    func ButtonColorAdjustment(sender:UIButton,DefaultColor: UIColor, isEnable:Bool){
         switch isEnable {
         case true:
             DispatchQueue.main.async {
@@ -103,7 +103,6 @@ extension SpeechRecogScreen {
             speechLabel.widthAnchor.constraint(equalToConstant: view.frame.width / 1.1),
  
             VStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//            VStack.widthAnchor.constraint(equalToConstant: view.frame.width / 1.1),
             VStack.bottomAnchor.constraint(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.bottomAnchor, multiplier: -2),
             VStack.heightAnchor.constraint(equalToConstant: view.frame.height / 5),
             
@@ -124,10 +123,23 @@ extension SpeechRecogScreen: SFSpeechRecognizerDelegate {
         ButtonColorAdjustment(sender: speechButton, DefaultColor: .blue, isEnable: false)
         ButtonColorAdjustment(sender: speechStopButton, DefaultColor: .red, isEnable: true)
         speechLabel.text = "..."
+        request.shouldReportPartialResults = true
+        
+        let audioSession = AVAudioSession.sharedInstance()
+        do {
+            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
+        } catch {
+            print(error)
+        }
+        do {
+            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            print(error)
+        }
         
         let inputNode = audioEngine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
             self?.request.append(buffer)
         }
         
@@ -150,7 +162,21 @@ extension SpeechRecogScreen: SFSpeechRecognizerDelegate {
         }
         
         
-        recognitionTask = speechRecognizer?.recognitionTask(with: request, resultHandler: { [weak self] result, _ in
+        recognitionTask = speechRecognizer?.recognitionTask(with: request, resultHandler: { [weak self] result, err in
+            
+            guard err == nil else {
+                self?.ShowAlert(alertModel: SpeechErrorAlert.HandleIssue)
+                self?.audioEngine.stop()
+                inputNode.removeTap(onBus: 0)
+                
+                self?.recognitionTask = nil
+                
+                self?.ButtonColorAdjustment(sender: self!.speechButton, DefaultColor: .blue, isEnable: true)
+                self?.ButtonColorAdjustment(sender: self!.speechStopButton, DefaultColor: .red, isEnable: false)
+                self?.speechLabel.text = "Your speech will show here when you start recording!"
+                return
+            }
+            
             if let result = result {
                 let bestString = result.bestTranscription.formattedString
                 DispatchQueue.main.async {
@@ -159,20 +185,23 @@ extension SpeechRecogScreen: SFSpeechRecognizerDelegate {
             } else {
                 self?.ShowAlert(alertModel: SpeechErrorAlert.HandleIssue)
             }
+            
         })
-        
     }
     
     private func stopRecording() {
-        self.audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
+        recognitionTask?.finish()
+        recognitionTask = nil
         
-        self.speechRecognizer = nil
-        self.recognitionTask = nil
+        request.endAudio()
+        audioEngine.stop()
+        audioEngine.inputNode.removeTap(onBus: 0)
         
         ButtonColorAdjustment(sender: speechButton, DefaultColor: .blue, isEnable: true)
         ButtonColorAdjustment(sender: speechStopButton, DefaultColor: .red, isEnable: false)
-        self.speechLabel.text = "Your speech will show here when you start recording!"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.speechLabel.text = "Your speech will show here when you start recording!"
+        }
     }
     
 }
