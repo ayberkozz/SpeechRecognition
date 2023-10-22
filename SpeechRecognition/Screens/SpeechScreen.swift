@@ -10,15 +10,22 @@ import Speech
 
 class SpeechRecogScreen: UIViewController {
     
-    private let audioEngine = AVAudioEngine()
-    private var speechRecognizer: SFSpeechRecognizer? = SFSpeechRecognizer(locale: Locale.init(identifier: "tr"))
-    private let request = SFSpeechAudioBufferRecognitionRequest()
-    private var recognitionTask : SFSpeechRecognitionTask?
-    
     private let VStack = UIStackView()
     private let speechLabel = UILabel()
     private let speechButton = UIButton()
     private let speechStopButton = UIButton()
+    
+    private let viewModel : SpeechScreenViewModel
+    
+    init(viewModel: SpeechScreenViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel.output = self
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,11 +39,11 @@ class SpeechRecogScreen: UIViewController {
 extension SpeechRecogScreen {
     
     @objc private func SpeechButtonTapped() {
-        recordAndRecognizeSpeech()
+        viewModel.recordAndRecognizeSpeech(speechButton: speechButton, speechDefaultColor: .blue, speechIsEnable: false, speechStopButton: speechStopButton, StopDefaultColor: .red, StopIsEnable: true)
     }
     
     @objc private func SpeechStopButtonTapped() {
-        stopRecording()
+        viewModel.stopRecording(speechButton: speechButton, speechDefaultColor: .blue, speechIsEnable: true, speechStopButton: speechStopButton, StopDefaultColor: .red, StopIsEnable: false)
     }
     
     func ShowAlert(alertModel: SpeechErrorAlertModel) {
@@ -97,7 +104,6 @@ extension SpeechRecogScreen {
         VStack.addArrangedSubview(speechStopButton)
 
         NSLayoutConstraint.activate([
-            
             speechLabel.topAnchor.constraint(equalToSystemSpacingBelow: view.safeAreaLayoutGuide.topAnchor, multiplier: 2),
             speechLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             speechLabel.widthAnchor.constraint(equalToConstant: view.frame.width / 1.1),
@@ -115,94 +121,18 @@ extension SpeechRecogScreen {
     
 }
 
-//MARK: - Speech Recognizer Delegate
-extension SpeechRecogScreen: SFSpeechRecognizerDelegate {
-    
-    private func recordAndRecognizeSpeech() {
-        
-        ButtonColorAdjustment(sender: speechButton, DefaultColor: .blue, isEnable: false)
-        ButtonColorAdjustment(sender: speechStopButton, DefaultColor: .red, isEnable: true)
-        speechLabel.text = "..."
-        request.shouldReportPartialResults = true
-        
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-        } catch {
-            print(error)
-        }
-        do {
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            print(error)
-        }
-        
-        let inputNode = audioEngine.inputNode
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
-            self?.request.append(buffer)
-        }
-        
-        audioEngine.prepare()
-        do {
-            try audioEngine.start()
-        }
-        catch {
-            print(error)
-        }
-        
-        guard let myRecognizer = SFSpeechRecognizer() else {
-            ShowAlert(alertModel: SpeechErrorAlert.LocaleIssue)
-            return
-        }
-        
-        guard myRecognizer.isAvailable else {
-            ShowAlert(alertModel: SpeechErrorAlert.RecognizerIssue)
-            return
-        }
-        
-        
-        recognitionTask = speechRecognizer?.recognitionTask(with: request, resultHandler: { [weak self] result, err in
-            
-            guard err == nil else {
-                self?.ShowAlert(alertModel: SpeechErrorAlert.HandleIssue)
-                self?.audioEngine.stop()
-                inputNode.removeTap(onBus: 0)
-                
-                self?.recognitionTask = nil
-                
-                self?.ButtonColorAdjustment(sender: self!.speechButton, DefaultColor: .blue, isEnable: true)
-                self?.ButtonColorAdjustment(sender: self!.speechStopButton, DefaultColor: .red, isEnable: false)
-                self?.speechLabel.text = "Your speech will show here when you start recording!"
-                return
-            }
-            
-            if let result = result {
-                let bestString = result.bestTranscription.formattedString
-                DispatchQueue.main.async {
-                    self?.speechLabel.text = bestString
-                }
-            } else {
-                self?.ShowAlert(alertModel: SpeechErrorAlert.HandleIssue)
-            }
-            
-        })
-    }
-    
-    private func stopRecording() {
-        recognitionTask?.finish()
-        recognitionTask = nil
-        
-        request.endAudio()
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        
-        ButtonColorAdjustment(sender: speechButton, DefaultColor: .blue, isEnable: true)
-        ButtonColorAdjustment(sender: speechStopButton, DefaultColor: .red, isEnable: false)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.speechLabel.text = "Your speech will show here when you start recording!"
+//MARK: - Output
+extension SpeechRecogScreen: SpeechScreenVMOutput {
+    func speechLabel(speechText: String) {
+        DispatchQueue.main.async {
+            self.speechLabel.text = speechText
         }
     }
     
+    func alert(alert: SpeechErrorAlertModel) {
+        let alert = UIAlertController(title: alert.titleText, message: alert.description, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 

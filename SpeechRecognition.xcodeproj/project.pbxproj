@@ -13,6 +13,8 @@
 		4BA7E3802AE3FC6400265944 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4BA7E37F2AE3FC6400265944 /* Assets.xcassets */; };
 		4BA7E3832AE3FC6400265944 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4BA7E3812AE3FC6400265944 /* LaunchScreen.storyboard */; };
 		4BA7E38D2AE418A400265944 /* SpeechErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BA7E38C2AE418A400265944 /* SpeechErrors.swift */; };
+		4BB83A292AE5362D00CBCB2F /* SpeechScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB83A282AE5362D00CBCB2F /* SpeechScreenViewModel.swift */; };
+		4BB83A2B2AE5364200CBCB2F /* SpeechScreenVMOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4BB83A2A2AE5364200CBCB2F /* SpeechScreenVMOutput.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		4BA7E3822AE3FC6400265944 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		4BA7E3842AE3FC6400265944 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4BA7E38C2AE418A400265944 /* SpeechErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechErrors.swift; sourceTree = "<group>"; };
+		4BB83A282AE5362D00CBCB2F /* SpeechScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechScreenViewModel.swift; sourceTree = "<group>"; };
+		4BB83A2A2AE5364200CBCB2F /* SpeechScreenVMOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechScreenVMOutput.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +74,7 @@
 		4BA7E38A2AE4188700265944 /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				4BB83A272AE5361600CBCB2F /* SpeechScreenVM */,
 				4BA7E37A2AE3FC6200265944 /* SpeechScreen.swift */,
 			);
 			path = Screens;
@@ -81,6 +86,15 @@
 				4BA7E38C2AE418A400265944 /* SpeechErrors.swift */,
 			);
 			path = Error;
+			sourceTree = "<group>";
+		};
+		4BB83A272AE5361600CBCB2F /* SpeechScreenVM */ = {
+			isa = PBXGroup;
+			children = (
+				4BB83A282AE5362D00CBCB2F /* SpeechScreenViewModel.swift */,
+				4BB83A2A2AE5364200CBCB2F /* SpeechScreenVMOutput.swift */,
+			);
+			path = SpeechScreenVM;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,9 +168,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				4BA7E37B2AE3FC6200265944 /* SpeechScreen.swift in Sources */,
+				4BB83A292AE5362D00CBCB2F /* SpeechScreenViewModel.swift in Sources */,
 				4BA7E3772AE3FC6200265944 /* AppDelegate.swift in Sources */,
 				4BA7E38D2AE418A400265944 /* SpeechErrors.swift in Sources */,
 				4BA7E3792AE3FC6200265944 /* SceneDelegate.swift in Sources */,
+				4BB83A2B2AE5364200CBCB2F /* SpeechScreenVMOutput.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
